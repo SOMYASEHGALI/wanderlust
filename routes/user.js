@@ -3,6 +3,7 @@ const router=express.Router({mergeParams:true});
 const User=require("../models/user.js");
 const wrapasync = require("../utils/wrapasync.js");
 const passport=require("passport");
+const { saveRedirectUrl } = require("../middleware.js");
 router.get("/signup",(req,res)=>{
     res.render("users/signup.ejs");
 })
@@ -46,10 +47,10 @@ router.post("/signup", wrapasync(async (req, res) => {
 router.get("/login",(req,res)=>{
     res.render("users/login.ejs");
 })
-router.post("/login",passport.authenticate("local",{
+router.post("/login",saveRedirectUrl,passport.authenticate("local",{
     failureRedirect:"/login",failureFlash:true}),
     async(req,res)=>{req.flash("success","welcome to wanderlst!you are logged in!")
-res.redirect("/listings")}
+res.redirect(res.locals.redirectUrl)}
 
 )
 router.get("/logout",(req,res,next)=>{
